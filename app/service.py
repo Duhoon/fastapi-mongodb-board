@@ -8,7 +8,11 @@ from datetime import datetime
 from bson import ObjectId
 from math import ceil
 
+# 리스트 페이지 별 조회
 def get_list(page: int, size: int):
+  if size == 0:
+    raise ZeroDivisionError()
+
   try :
     posts = []
 
@@ -45,6 +49,7 @@ def get_list(page: int, size: int):
   except Exception as e:
     raise e
 
+# 상세 조회
 def get_detail(_id: str):
   try:
     post = collection.find_one({"_id": ObjectId(_id)})
@@ -54,21 +59,35 @@ def get_detail(_id: str):
   except Exception as e:
     raise e
 
+# 생성
 def create_post(post: CreatePostRequestDto):
+  post = post.model_dump()
+  post = {
+    **post,
+    "created_at": datetime.now(),
+    "updated_at": datetime.now(),
+  }
+
   try : 
-    id = str(collection.insert_one(post.model_dump()).inserted_id)
+    id = str(collection.insert_one(post))
     return id
   except Exception as e:
     raise e
 
+# 수정
 def update_post(post: UpdatePostRequestDto):
   post_filtered = post.model_dump(exclude={"id"})
+  post_filtered = {
+    **post_filtered,
+    "updated_at": datetime.now(),
+  }
 
   try :
     collection.update_one({"_id", ObjectId(post.id)}, post_filtered)
   except Exception as e:
     raise e
 
+# 삭제
 def delete_post(id: str):
   try :
     return collection.delete_one({"_id": ObjectId(id)})

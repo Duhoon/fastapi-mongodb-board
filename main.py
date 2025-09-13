@@ -9,6 +9,7 @@ app = FastAPI()
 async def alive():
   return status.HTTP_200_OK
 
+# 리스트 조회
 @app.get("/posts")
 async def list(page:int = Query(1), size:int = Query(10)):
   try:
@@ -17,6 +18,7 @@ async def list(page:int = Query(1), size:int = Query(10)):
     print(e)
     return status.HTTP_400_BAD_REQUEST
 
+# 상세 조회
 @app.get("/post/{_id}")
 async def detail(_id: str):
   try :
@@ -25,6 +27,7 @@ async def detail(_id: str):
     print(e)
     return status.HTTP_400_BAD_REQUEST
 
+# 생성
 @app.post("/post")
 async def create(post: CreatePostRequestDto):
   try : 
@@ -33,6 +36,7 @@ async def create(post: CreatePostRequestDto):
     print(e)
     return status.HTTP_400_BAD_REQUEST
 
+# 수정
 @app.put("/post")
 async def edit(post: UpdatePostRequestDto):
   try :
@@ -41,6 +45,7 @@ async def edit(post: UpdatePostRequestDto):
     print(e)
     return status.HTTP_400_BAD_REQUEST
 
+# 삭제
 @app.delete("/post/{_id}")
 async def delete(_id: str):
   try :
