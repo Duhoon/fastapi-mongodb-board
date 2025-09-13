@@ -1,18 +1,46 @@
 from app.db import collection
-from app.dto import CreatePostRequestDto, UpdatePostRequestDto
+from app.dto import (
+  CreatePostRequestDto, 
+  UpdatePostRequestDto, 
+  PaginationRequest, 
+  PaginationResponse,
+)
 from datetime import datetime
 from bson import ObjectId
+from math import ceil
 
-def get_list():
+def get_list(page: int, size: int):
   try :
     posts = []
 
+    total = collection.count_documents({})
+    total_pages = ceil(total / size)
+    docs = (
+      collection
+        .find({}, {"content": False})
+        .sort("created_at", -1)
+        .skip((page - 1) * size)
+        .limit(size)
+    )
+    has_next = total_pages > page
+    has_prev = page > 1
+
     # content 필드 제외
-    for post in collection.find({}, {"content": False}):
+    for post in docs:
       post["_id"] = str(post["_id"])
       posts.append(post)
 
-    return posts
+    res = {
+      "data": posts,
+      "page": page,
+      "size": size,
+      "total": total,
+      "total_pages": total_pages,
+      "has_next": has_next,
+      "has_prev": has_prev
+    }
+
+    return PaginationResponse(**res)
   except Exception as e:
     raise e
 

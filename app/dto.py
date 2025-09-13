@@ -1,6 +1,21 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
+
+# 페이지네이션 요청
+class PaginationRequest(BaseModel):
+  page: int
+  size: int
+
+# 페이지네이션 반환값
+class PaginationResponse(BaseModel):
+  data: Any
+  page: int
+  size: int
+  total: int
+  total_pages: int
+  has_next: bool
+  has_prev: bool
 
 # 게시판 글 생성 DTO
 class CreatePostRequestDto(BaseModel):
