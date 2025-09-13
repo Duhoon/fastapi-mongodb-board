@@ -2,7 +2,6 @@ from app.db import collection
 from app.dto import (
   CreatePostRequestDto, 
   UpdatePostRequestDto, 
-  PaginationRequest, 
   PaginationResponse,
 )
 from datetime import datetime
@@ -13,6 +12,7 @@ def get_list(page: int, size: int):
   try :
     posts = []
 
+    # 페이지네이션 메타데이터
     total = collection.count_documents({})
     total_pages = ceil(total / size)
     docs = (
@@ -30,6 +30,7 @@ def get_list(page: int, size: int):
       post["_id"] = str(post["_id"])
       posts.append(post)
 
+    # 반환값 생성
     res = {
       "data": posts,
       "page": page,

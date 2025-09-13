@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, Query
 import uvicorn
-from app.dto import CreatePostRequestDto, UpdatePostRequestDto, PaginationRequest
+from app.dto import CreatePostRequestDto, UpdatePostRequestDto
 from app.service import get_detail, get_list, create_post, update_post, delete_post
 
 app = FastAPI()
@@ -10,7 +10,7 @@ async def alive():
   return status.HTTP_200_OK
 
 @app.get("/posts")
-async def list(page:int = Query(None), size:int = Query(10)):
+async def list(page:int = Query(1), size:int = Query(10)):
   try:
     return get_list(page, size)
   except Exception as e :
